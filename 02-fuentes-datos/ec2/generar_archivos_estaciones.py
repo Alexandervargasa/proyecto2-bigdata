@@ -14,7 +14,7 @@ Las ciudades y coordenadas se leen de la fuente 1 (MariaDB). Con --csv se pueden
 leer de un CSV (útil para pruebas sin base de datos).
 
 Uso en el EC2:
-    source ~/proyecto2-bigdata-clima/config.env
+    source <carpeta-del-repo>/config.env
     python3 generar_archivos_estaciones.py
 """
 import argparse

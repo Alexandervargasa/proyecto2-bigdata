@@ -3,7 +3,7 @@
 #   10:00 UTC = 05:00 Colombia  -> MariaDB a S3 (diario)
 #   minuto 15 de cada hora      -> archivos a S3 (sync incremental)
 set -euo pipefail
-REPO="$HOME/proyecto2-bigdata-clima"
+REPO="$(cd "$(dirname "$0")/../.." && pwd)"   # raíz del repo, se llame como se llame
 mkdir -p "$HOME/logs"
 
 crontab - <<EOF

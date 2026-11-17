@@ -2,7 +2,7 @@
 # Ejecutar en el EC2: deja Streamlit corriendo como servicio (arranca solo si
 # el EC2 se reinicia). Requiere API_URL en config.env.
 set -euo pipefail
-REPO="$HOME/proyecto2-bigdata-clima"
+REPO="$(cd "$(dirname "$0")/../.." && pwd)"   # raíz del repo, se llame como se llame
 source "$REPO/config.env"
 : "${API_URL:?Agregue export API_URL=... a config.env (lo imprimió desplegar_api.sh)}"
 pip3 install --user -q -r "$REPO/08-visualizacion/streamlit/requirements.txt"
