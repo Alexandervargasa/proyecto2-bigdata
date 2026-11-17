@@ -43,4 +43,8 @@ while true; do
   [[ "$ESTADO" =~ ^(SUCCEEDED|FAILED|STOPPED|TIMEOUT|ERROR)$ ]] && break
   sleep 20
 done
-aws s3 ls "$TRUSTED/" --recursive | head -20
+echo "Tablas en trusted:"
+aws s3 ls "$TRUSTED/"
+aws s3 ls "$TRUSTED/" --recursive > /tmp/trusted_lista.txt   # a archivo: evita el 'Broken pipe' de | head
+echo "Archivos Parquet: $(grep -c '\.parquet$' /tmp/trusted_lista.txt)"
+echo "Ver el log de calidad:  aws logs tail /aws-glue/jobs/output --since 30m | grep raw_a_trusted"

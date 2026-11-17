@@ -104,8 +104,12 @@ def main():
     xs = [0, pts["altitud_m"].max()]
     ax.plot(xs, [reg["temp_estimada_nivel_mar"] + reg["grados_por_1000m"] * x / 1000 for x in xs],
             color=TINTA_2, linewidth=1.5, linestyle="--")
-    for _, f in pts[pts["ciudad"].isin(["Bogotá", "Tunja", "Medellín", "Cali", "Santa Marta", "Pasto"])].iterrows():
-        ax.annotate(f["ciudad"], (f["altitud_m"], f["temp_media"]), xytext=(5, 4),
+    # (desplazamiento x, y en puntos, alineación) por ciudad: evita que las etiquetas se monten
+    etiquetas = {"Valledupar": (7, 2, "left"), "Cali": (7, 4, "left"), "Medellín": (7, 4, "left"),
+                 "Pasto": (-7, -12, "right"), "Bogotá": (7, 4, "left"), "Tunja": (7, -3, "left")}
+    for _, f in pts[pts["ciudad"].isin(list(etiquetas))].iterrows():
+        dx, dy, ha = etiquetas[f["ciudad"]]
+        ax.annotate(f["ciudad"], (f["altitud_m"], f["temp_media"]), xytext=(dx, dy), ha=ha,
                     textcoords="offset points", fontsize=8, color=TINTA_2)
     ax.set(title=f"P4 · Altitud vs temperatura  (r = {reg['correlacion']}, "
                  f"{reg['grados_por_1000m']} °C por 1.000 m)",
