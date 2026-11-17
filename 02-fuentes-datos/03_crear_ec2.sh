@@ -12,6 +12,7 @@ AMI=$(aws ssm get-parameter \
        --query Parameter.Value --output text)
 SG_EC2=$(aws ec2 describe-security-groups --filters Name=group-name,Values="$SG_EC2_NAME" \
           --query 'SecurityGroups[0].GroupId' --output text)
+[[ "$SG_EC2" == sg-* ]] || { echo "ERROR: no existe el security group $SG_EC2_NAME. Ejecute antes 01_crear_red.sh" >&2; exit 1; }
 
 # user-data: se ejecuta una sola vez, como root, al primer arranque
 USER_DATA=$(cat <<EOF

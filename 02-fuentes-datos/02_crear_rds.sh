@@ -6,6 +6,7 @@ set -euo pipefail
 
 SG_RDS=$(aws ec2 describe-security-groups --filters Name=group-name,Values="$SG_RDS_NAME" \
           --query 'SecurityGroups[0].GroupId' --output text)
+[[ "$SG_RDS" == sg-* ]] || { echo "ERROR: no existe el security group $SG_RDS_NAME. Ejecute antes 01_crear_red.sh" >&2; exit 1; }
 
 if ! aws rds describe-db-instances --db-instance-identifier "$DB_INSTANCE_ID" >/dev/null 2>&1; then
   aws rds create-db-instance \

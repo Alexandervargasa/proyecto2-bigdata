@@ -29,7 +29,7 @@ bash 02-fuentes-datos/02_crear_rds.sh      # ~10 min
 ```
 Por consola (equivalente, útil para pantallazos): RDS → Create database → Standard
 create → MariaDB → Free tier / `db.t3.micro` → identificador `clima-mariadb` →
-usuario `admin` → Public access **No** → VPC security group `sg-clima-rds`.
+usuario `admin` → Public access **No** → VPC security group `clima-rds-sg`.
 
 ## 3. Fuente 2 — EC2 servidor de archivos
 

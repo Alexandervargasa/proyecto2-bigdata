@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Ejecutar DENTRO del EC2 (el RDS solo acepta conexiones desde sg-clima-ec2).
+# Ejecutar DENTRO del EC2 (el RDS solo acepta conexiones desde clima-ec2-sg).
 # Crea el esquema y carga los datos maestros.
 set -euo pipefail
 : "${DB_HOST:?Ponga DB_HOST en config.env y haga: source config.env}"
