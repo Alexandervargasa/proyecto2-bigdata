@@ -4,6 +4,7 @@ Punto 8c — App Streamlit que consume la API publicada en API Gateway.
     export API_URL=https://xxxx.execute-api.us-east-1.amazonaws.com
     streamlit run app.py --server.port 8501 --server.address 0.0.0.0
 """
+import inspect
 import os
 
 import altair as alt
@@ -12,6 +13,13 @@ import requests
 import streamlit as st
 
 API_URL = os.environ.get("API_URL", "").rstrip("/")
+
+# Compatibilidad: Streamlit reciente usa width="stretch"; las versiones que se instalan
+# con Python 3.9 (Amazon Linux 2023 en el EC2) solo conocen use_container_width=True.
+if "width" in inspect.signature(st.altair_chart).parameters:
+    ANCHO = {"width": "stretch"}
+else:
+    ANCHO = {"use_container_width": True}
 NARANJA, AZUL, AQUA = "#eb6834", "#2a78d6", "#1baf7a"
 MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
 
@@ -50,31 +58,31 @@ with tab_preg:
         c2.altair_chart(alt.Chart(df).mark_bar(color=NARANJA, cornerRadiusEnd=4).encode(
             x=alt.X("temp_max_promedio:Q", title="°C"),
             y=alt.Y("ciudad:N", sort="-x", title=None),
-            tooltip=list(df.columns)), width="stretch")
+            tooltip=list(df.columns)), **ANCHO)
     elif n == 2:
         st.altair_chart(alt.Chart(df).mark_bar(color=AZUL, cornerRadiusEnd=4).encode(
             x=alt.X("temp_media_2024:Q", title="Temperatura media 2024 (°C)"),
             y=alt.Y("departamento:N", sort="-x", title=None), tooltip=list(df.columns)
-        ).properties(height=700), width="stretch")
+        ).properties(height=700), **ANCHO)
     elif n == 3:
         st.altair_chart(alt.Chart(df).mark_bar(cornerRadiusEnd=4).encode(
             x=alt.X("region_natural:N", title=None), xOffset="anio:N",
             y=alt.Y("precip_anual_promedio_mm:Q", title="mm / año"),
             color=alt.Color("anio:O", scale=alt.Scale(scheme="blues"), title="Año"),
-            tooltip=list(df.columns)), width="stretch")
+            tooltip=list(df.columns)), **ANCHO)
     elif n == 4:
         puntos = alt.Chart(df).mark_circle(size=80, color=AZUL).encode(
             x=alt.X("altitud_m:Q", title="Altitud (m)"), y=alt.Y("temp_media:Q", title="Temperatura media (°C)"),
             tooltip=list(df.columns))
         st.altair_chart(puntos + puntos.transform_regression("altitud_m", "temp_media")
-                        .mark_line(color="#52514e", strokeDash=[6, 4]), width="stretch")
+                        .mark_line(color="#52514e", strokeDash=[6, 4]), **ANCHO)
     elif n == 5:
         df["mes_txt"] = df["mes"].map(lambda m: MESES[m - 1])
         st.altair_chart(alt.Chart(df).mark_rect().encode(
             x=alt.X("mes_txt:N", sort=MESES, title=None), y=alt.Y("region_natural:N", title=None),
             color=alt.Color("precip_mensual_promedio_mm:Q", scale=alt.Scale(scheme="blues"), title="mm/mes"),
             tooltip=["region_natural", "mes", "precip_mensual_promedio_mm", "puesto"]
-        ).properties(height=320), width="stretch")
+        ).properties(height=320), **ANCHO)
     elif n == 6:
         largo = df.melt(id_vars=["ciudad"], value_vars=["dias_2024", "dias_2025"], var_name="anio", value_name="dias")
         st.altair_chart(alt.Chart(largo).mark_bar(cornerRadiusEnd=4).encode(
@@ -82,23 +90,23 @@ with tab_preg:
             x=alt.X("dias:Q", title="Días con Tmax ≥ 35 °C"),
             color=alt.Color("anio:N", scale=alt.Scale(domain=["dias_2024", "dias_2025"], range=[NARANJA, AZUL]),
                             title="Año"), tooltip=["ciudad", "anio", "dias"]
-        ).properties(height=650), width="stretch")
+        ).properties(height=650), **ANCHO)
     elif n == 7:
         st.altair_chart(alt.Chart(df).mark_bar(cornerRadiusEnd=4).encode(
             x=alt.X("region_natural:N", title=None), xOffset="fase_enso:N",
             y=alt.Y("anomalia_pct:Q", title="% vs. promedio del mes"),
             color=alt.Color("fase_enso:N", scale=alt.Scale(domain=["El Niño", "Neutral", "La Niña"],
                                                             range=[NARANJA, AQUA, AZUL]), title="Fase"),
-            tooltip=list(df.columns)), width="stretch")
+            tooltip=list(df.columns)), **ANCHO)
     elif n == 8:
         df["millones_persona_dias"] = df["persona_dias_expuestos"] / 1e6
         st.altair_chart(alt.Chart(df).mark_bar(color=NARANJA, cornerRadiusEnd=4).encode(
             x=alt.X("millones_persona_dias:Q", title="Millones de persona-días"),
             y=alt.Y("departamento:N", sort="-x", title=None), tooltip=list(df.columns)),
-            width="stretch")
+            **ANCHO)
 
     with st.expander("Ver tabla"):
-        st.dataframe(df, width="stretch", hide_index=True)
+        st.dataframe(df, hide_index=True, **ANCHO)
 
 # ------------------------------------------------------------------ ciudad
 with tab_ciudad:
@@ -125,11 +133,11 @@ with tab_ciudad:
             color=alt.Color("serie:N", scale=alt.Scale(domain=["Máxima", "Media", "Mínima"],
                                                        range=[NARANJA, AQUA, AZUL]), title=None),
             tooltip=["periodo:T", "serie", "°C"]).properties(title=f"Temperatura mensual · {nombre}"),
-            width="stretch")
+            **ANCHO)
         st.altair_chart(alt.Chart(serie).mark_bar(color=AZUL, cornerRadiusEnd=3).encode(
             x=alt.X("periodo:T", title=None), y=alt.Y("precip_total_mm:Q", title="mm"),
             tooltip=["periodo:T", "precip_total_mm", "fase_enso"]).properties(title="Lluvia mensual"),
-            width="stretch")
+            **ANCHO)
 
 # ------------------------------------------------------------------ api
 with tab_api:
