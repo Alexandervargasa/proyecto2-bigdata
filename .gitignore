@@ -1,0 +1,8 @@
+config.env
+*.pyc
+__pycache__/
+.venv/
+*.zip
+pruebas_locales/datalake/
+pruebas_locales/salida/
+.DS_Store
