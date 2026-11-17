@@ -31,12 +31,22 @@ VARIABLES = ["temperature_2m_max", "temperature_2m_min", "temperature_2m_mean",
 FALTANTE = "-999"
 
 
+def ca_rds():
+    """Certificado de RDS: MariaDB en RDS exige TLS (require_secure_transport=ON)."""
+    ca = os.path.expanduser(os.environ.get("DB_SSL_CA", "~/rds-global-bundle.pem"))
+    if not os.path.isfile(ca):
+        sys.exit(f"Falta el certificado {ca}. Descárguelo con:\n"
+                 f"  curl -o {ca} https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem")
+    return ca
+
+
 def leer_ciudades_mariadb():
     import pymysql  # pip3 install --user pymysql
-    con = pymysql.connect(host=os.environ["DB_HOST"], user=os.environ["DB_USER"],
+    con = pymysql.connect(host=os.environ["DB_HOST"], port=int(os.environ.get("DB_PORT", "3306")), user=os.environ["DB_USER"],
                           password=os.environ["DB_PASSWORD"],
                           database=os.environ.get("DB_NAME", "clima_maestros"),
-                          cursorclass=pymysql.cursors.DictCursor, charset="utf8mb4")
+                          cursorclass=pymysql.cursors.DictCursor, charset="utf8mb4",
+                          ssl={"ca": ca_rds()})
     with con, con.cursor() as cur:
         cur.execute("SELECT id_ciudad, ciudad, latitud, longitud FROM ciudad ORDER BY id_ciudad")
         return cur.fetchall()

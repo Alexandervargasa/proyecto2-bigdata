@@ -20,6 +20,7 @@ USER_DATA=$(cat <<EOF
 dnf install -y git mariadb105 python3-pip cronie
 systemctl enable --now crond
 mkdir -p /opt/datos/estaciones && chown -R ec2-user:ec2-user /opt/datos
+sudo -u ec2-user curl -sSf -o /home/ec2-user/rds-global-bundle.pem https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem
 sudo -u ec2-user git clone ${REPO_URL} /home/ec2-user/proyecto2-bigdata-clima || true
 sudo -u ec2-user pip3 install --user pymysql boto3 requests streamlit pandas pyarrow altair
 EOF

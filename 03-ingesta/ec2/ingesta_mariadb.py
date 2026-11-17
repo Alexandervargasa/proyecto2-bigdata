@@ -22,13 +22,23 @@ import pymysql
 TABLAS = ["departamento", "ciudad"]
 
 
+def ca_rds():
+    """Certificado de RDS: MariaDB en RDS exige TLS (require_secure_transport=ON)."""
+    ca = os.path.expanduser(os.environ.get("DB_SSL_CA", "~/rds-global-bundle.pem"))
+    if not os.path.isfile(ca):
+        sys.exit(f"Falta el certificado {ca}. Descárguelo con:\n"
+                 f"  curl -o {ca} https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem")
+    return ca
+
+
 def main():
     bucket = os.environ["BUCKET"]
     hoy = dt.date.today().isoformat()
     s3 = boto3.client("s3")
-    con = pymysql.connect(host=os.environ["DB_HOST"], user=os.environ["DB_USER"],
+    con = pymysql.connect(host=os.environ["DB_HOST"], port=int(os.environ.get("DB_PORT", "3306")), user=os.environ["DB_USER"],
                           password=os.environ["DB_PASSWORD"], database=os.environ["DB_NAME"],
-                          charset="utf8mb4")
+                          charset="utf8mb4",
+                          ssl={"ca": ca_rds()})
     with con:
         for tabla in TABLAS:
             with con.cursor() as cur:

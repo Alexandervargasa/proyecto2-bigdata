@@ -1,4 +1,5 @@
 -- Datos semilla generados desde departamentos.csv y ciudades.csv
+SET NAMES utf8mb4;
 USE clima_maestros;
 
 INSERT INTO departamento (cod_depto, departamento, poblacion_2024, area_km2) VALUES

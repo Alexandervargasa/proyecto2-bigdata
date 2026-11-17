@@ -1,6 +1,7 @@
 -- Esquema de la fuente 1: datos maestros en RDS MariaDB
 CREATE DATABASE IF NOT EXISTS clima_maestros
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+SET NAMES utf8mb4;
 USE clima_maestros;
 
 DROP TABLE IF EXISTS ciudad;
