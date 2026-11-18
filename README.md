@@ -54,8 +54,7 @@ Requisitos: AWS Academy **Learner Lab** iniciado (círculo verde), región
 | 17 | CloudShell | `python3 08-visualizacion/matplotlib/graficas.py --refined $REFINED --salida graficas` | 1 min |
 | 18 | EC2 | `bash 08-visualizacion/streamlit/instalar_servicio.sh` → `http://<ip>:8501` | 2 min |
 
-Cada carpeta tiene su `README.md` con el detalle, la alternativa por consola y
-las **evidencias** (pantallazos) que conviene pegar en el documento.
+Cada carpeta tiene su `README.md` con el detalle y la alternativa por consola
 
 ## Al terminar cada sesión del Learner Lab
 - Termine el EMR (`aws emr terminate-clusters --cluster-ids $CLUSTER_ID`); igual se
